@@ -4,7 +4,7 @@ They say, Golang is a very good choice, if you build a service for being deploye
 
 Fortunately, there are solutions already in existence that simplify our life. For example, if you want to have your data stored in MongoDB, you may just use MongoDB Atlas - a fully [managed database service in the cloud](https://www.mongodb.com/cloud/atlas). We do not explain here, how to setup a MongoDB cluster. It is very well done [here](https://docs.atlas.mongodb.com/getting-started/). We focus on how to create a connection to MongoDB Atlas with Go and interact with the database cluster.
 
-## Software Prerequisites
+## Prerequisites
 
 You need an account on MongoDB Atlas and a running database cluster there. The tier `M0 Sandbox` would be enough, since it is free to use and allows you to store up to 512MB of data.
 Please make sure your IP is added to the whitelist in your MongoDB Atlas project (see Security -> Network Access). If you deploy the Go service in a Google Kubernetes Engine, you may want to take a look at our next article, which explains how to securely connect a Kubernetes cluster with the MongoDB Atlas.
