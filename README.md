@@ -89,20 +89,24 @@ func main() {
 
 What we have now is a singleton `mongoConn` that can be used directly which is not a good idea. Why create it at all? Why cannot we establish a connection every time the client calls our endpoints?
 
-Because `mgo.DialWithInfo(...)` can take several seconds before the connection to the MongoDB Atlas is ready. There is a couple of necessary steps like sending and accepting certificates, authorization etc. that needs to be done, before your service can proceed with the next step.
+Because `mgo.DialWithInfo(...)` can take several seconds before the connection to the MongoDB Atlas is ready. There is a couple of necessary steps like sending and accepting certificates, authorization etc. that needs to be done, before your service can proceed to the next step.
 
 And of course you cannot use the singleton `mongoConn` in all your endpoints for an obvious reason (due to the side effects by using of a common connection in concurrent HTTP sessions).
 
-So, we use a copy of the singleton `mongoConn` which works perfect:
+So, we use a copy of the singleton `mongoConn` which works quick and safe:
 
 ```
     session := mongoConn.Copy() // "session" can be used safely
     defer session.Close()
 ```
 
-Let us implement `/save` and `/read` now. We store the data in a sort of generic way: everything what the client sends us, we are going to save into the Mongo database as a byte array.
+Let us implement `/save` and `/read` now. We store the data in a sort of generic way: everything what the client app sends us we are going to save into the Mongo database as a byte array.
 
 ```
+type MyEntity struct {
+	Data []byte `json:"data" bson:"data"`
+}
+
 func post(w http.ResponseWriter, req *http.Request) {
     payload, err := ioutil.ReadAll(req.Body)
     if err != nil {
@@ -136,7 +140,7 @@ func get(w http.ResponseWriter, req *http.Request) {
 
 _Normally you would not want to `panic` in case of an error, but return an HTTP error code in the response. However, we want to keep it simple for now._
 
-Do not forget to close a copy of your session. MongoDB Atlas considers sessions as a resource and like every database server has a limit of opened connections.
+Do not forget to close a copy of your session. MongoDB Atlas considers sessions as a resource and like every database server has a limit for the amount of opened connections.
 
 We are ready to test our endpoints!
 

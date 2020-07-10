@@ -12,6 +12,10 @@ import (
 
 var mongoConn *mgo.Session
 
+type MyEntity struct {
+	Data []byte `json:"data" bson:"data"`
+}
+
 func createConnection() (*mgo.Session, error) {
 	dialInfo := mgo.DialInfo{
 		Addrs: []string{
@@ -27,10 +31,6 @@ func createConnection() (*mgo.Session, error) {
 		return conn, err
 	}
 	return mgo.DialWithInfo(&dialInfo)
-}
-
-type MyEntity struct {
-	Data []byte `json:"data" bson:"data"`
 }
 
 func main() {
