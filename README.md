@@ -2,7 +2,7 @@
 
 They say, Golang is a very good choice, if you build a service for being deployed in the cloud infrastructure. And that is mostly true. However, if you have a stateful service with some database in the backend, you may find it difficult to setup such cloud infrastructure and to establish a communication between the Go service and the database server.
 
-Fortunately, there are solutions already in existence that simplify our life. For example, if you want to have your data stored in MongoDB, you may just use MongoDB Atlas - a fully [managed database service in the cloud](https://www.mongodb.com/cloud/atlas). We do not explain here, how to setup a MongoDB cluster there. It is very well done [here](https://docs.atlas.mongodb.com/getting-started/). We focus on how to create a connection to MongoDB Atlas with Go and interact with the database cluster.
+Fortunately, there are solutions already in existence that simplify our life. For example, if you want to have your data stored in MongoDB, you may just use MongoDB Atlas - a fully [managed database service in the cloud](https://www.mongodb.com/cloud/atlas). We do not explain here, how to setup a MongoDB cluster. It is very well done [here](https://docs.atlas.mongodb.com/getting-started/). We focus on how to create a connection to MongoDB Atlas with Go and interact with the database cluster.
 
 ## Software Prerequisites
 
@@ -13,8 +13,8 @@ Please make sure your IP is added to the whitelist in your MongoDB Atlas project
 
 Let us create a simple Go service with two endpoints:
 
-- `/save` to receive a record to store
-- `/read` to read the previously stored record
+- `/save` to receive a record and to store it
+- `/read` to return the previously stored record back
 
 The service will listen at the port `8080`:
 
@@ -45,15 +45,21 @@ func get(w http.ResponseWriter, req *http.Request) {}
 ```
 func createConnection() (*mgo.Session, error) {
     dialInfo := mgo.DialInfo{
-        Addrs:    []string{"abc-shard-00-00.gcp.mongodb.net:27017", "abc-shard-00-01.gcp.mongodb.net:27017", "abc-shard-00-02.gcp.mongodb.net:27017"},
+        Addrs:    []string{
+            "abc-shard-00-00.gcp.mongodb.net:27017",
+            "abc-shard-00-01.gcp.mongodb.net:27017",
+            "abc-shard-00-02.gcp.mongodb.net:27017"
+        },
         Username: "MongoUser", // your mongodb user
         Password: "YourVerySecurePassword", // ...and mongodb password
     }
+
     tlsConfig := &tls.Config{}
     dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
         conn, err := tls.Dial("tcp", addr.String(), tlsConfig) // add TLS config
         return conn, err
     }
+
     return mgo.DialWithInfo(&dialInfo)
 }
 ```
@@ -62,7 +68,7 @@ On the MongoDB Atlas you always have not just a single database server, but a cl
 
 ![Shard Addresses](images/shards.png "Shards")
 
-We also added a TLS config into our code, because the MongoDB Atlas denies unencrypted connections.
+We also added a TLS config into the code, because the MongoDB Atlas denies unencrypted connections.
 
 Adding the initialization of the session variable completes the first step:
 
@@ -87,20 +93,20 @@ func main() {
 
 ## Using the mongo connection
 
-What we have now is a singleton `mongoConn` that can be used directly which is not a good idea. Why create it at all? Why cannot we establish a connection every time the client calls our endpoints?
+What we have now is a singleton `mongoConn` that can be used directly which is not a good idea. Why create it at all? Why cannot we establish a connection every time the client app calls our endpoints?
 
-Because `mgo.DialWithInfo(...)` can take several seconds before the connection to the MongoDB Atlas is ready. There is a couple of necessary steps like sending and accepting certificates, authorization etc. that needs to be done, before your service can proceed to the next step.
+Because `mgo.DialWithInfo(...)` can take several seconds before the connection to the MongoDB Atlas is ready. There is a couple of necessary steps like sending and accepting certificates, authorization etc. that needs to be done, before your service can proceed to the next step. You probably want your endpoints to answer within milliseconds, not seconds, right?
 
 And of course you cannot use the singleton `mongoConn` in all your endpoints for an obvious reason (due to the side effects by using of a common connection in concurrent HTTP sessions).
 
-So, we use a copy of the singleton `mongoConn` which works quick and safe:
+So, we use a copy of the singleton `mongoConn` which works quick enough and safe:
 
 ```
     session := mongoConn.Copy() // "session" can be used safely
     defer session.Close()
 ```
 
-Let us implement `/save` and `/read` now. We store the data in a sort of generic way: everything what the client app sends us we are going to save into the Mongo database as a byte array.
+Let us implement `/save` and `/read` now. We store the data in a sort of generic way: everything what the client app sends us we are going to store in the Mongo database as a byte array.
 
 ```
 type MyEntity struct {
@@ -140,13 +146,13 @@ func get(w http.ResponseWriter, req *http.Request) {
 
 _Normally you would not want to `panic` in case of an error, but return an HTTP error code in the response. However, we want to keep it simple for now._
 
-Do not forget to close a copy of your session. MongoDB Atlas considers sessions as a resource and like every database server has a limit for the amount of opened connections.
+Do not forget to close a copy of your session. MongoDB Atlas considers sessions as a resource and like every other database server has a limit for the amount of opened connections.
 
 We are ready to test our endpoints!
 
 ## Testing the endpoints
 
-You can start the service with following command (don't forget a point at the end):
+You can start the service with following command:
 
 ```
 > go run main.go .
