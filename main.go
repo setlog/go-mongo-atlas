@@ -12,6 +12,23 @@ import (
 
 var mongoConn *mgo.Session
 
+func createConnection() (*mgo.Session, error) {
+	dialInfo := mgo.DialInfo{
+		Addrs: []string{
+			"abc-shard-00-00.gcp.mongodb.net:27017",
+			"abc-shard-00-01.gcp.mongodb.net:27017",
+			"abc-shard-00-02.gcp.mongodb.net:27017"},
+		Username: "MongoUser",
+		Password: "YourVerySecurePassword",
+	}
+	tlsConfig := &tls.Config{}
+	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+		conn, err := tls.Dial("tcp", addr.String(), tlsConfig)
+		return conn, err
+	}
+	return mgo.DialWithInfo(&dialInfo)
+}
+
 type MyEntity struct {
 	Data []byte `json:"data" bson:"data"`
 }
@@ -29,20 +46,6 @@ func main() {
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
-}
-
-func createConnection() (*mgo.Session, error) {
-	dialInfo := mgo.DialInfo{
-		Addrs:    []string{"abc-shard-00-00.gcp.mongodb.net:27017", "abc-shard-00-01.gcp.mongodb.net:27017", "abc-shard-00-02.gcp.mongodb.net:27017"},
-		Username: "MongoUser",
-		Password: "YourVerySecurePassword",
-	}
-	tlsConfig := &tls.Config{}
-	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
-		conn, err := tls.Dial("tcp", addr.String(), tlsConfig)
-		return conn, err
-	}
-	return mgo.DialWithInfo(&dialInfo)
 }
 
 func post(w http.ResponseWriter, req *http.Request) {

@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "go",
+            "request": "launch",
+            "mode":"debug",
+            "program": "${workspaceRoot}",
+            "port": 8080,
+            "host": "127.0.0.1",
+            "showLog": true
+        }
+    ]
+}
