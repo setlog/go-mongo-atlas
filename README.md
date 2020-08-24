@@ -1,12 +1,12 @@
 ## Preface
 
-They say, Golang is a very good choice, if you build a service for being deployed in the cloud infrastructure. And that is mostly true. However, if you have a stateful service with some database in the backend, you may find it difficult to setup such cloud infrastructure and to establish a communication between the Go service and the database server.
+Many say Golang (or just Go) is a very good choice for developing a service for the cloud infrastructure. And that is mostly true. If you have a stateful service that requires a database in the backend, you may find it difficult to setup such cloud infrastructure and to establish a communication between the Go service and the database server.
 
-Fortunately, there are solutions already in existence that simplify our life. For example, if you want to have your data stored in MongoDB, you may just use MongoDB Atlas - a fully [managed database service in the cloud](https://www.mongodb.com/cloud/atlas). We do not explain here, how to setup a MongoDB cluster. It is very well done [here](https://docs.atlas.mongodb.com/getting-started/). We focus on how to create a connection to MongoDB Atlas with Go and interact with the database cluster.
+Fortunately, there are  already solutions that simplify our lives. For example, if you want to store your data in MongoDB, you can use MongoDB Atlas - a fully [managed database service in the cloud](https://www.mongodb.com/cloud/atlas). We do not explain here, how to setup a MongoDB cluster. It is very well done [here](https://docs.atlas.mongodb.com/getting-started/). We focus on how to create a connection to MongoDB Atlas with Go and interact with this database cluster.
 
 ## Prerequisites
 
-You need an account on MongoDB Atlas and a running database cluster there. The tier `M0 Sandbox` would be enough, since it is free to use and allows you to store up to 512MB of data.
+You need an account on MongoDB Atlas and a running database cluster. The tier `M0 Sandbox` would be enough, since it is for free use and allows you to store up to 512MB of data.
 Please make sure your IP is added to the whitelist in your MongoDB Atlas project (see Security -> Network Access). If you deploy the Go service in a Google Kubernetes Engine, you may want to take a look at our next article, which explains how to securely connect a Kubernetes cluster with the MongoDB Atlas.
 
 ## Create an empty Go service
@@ -16,7 +16,7 @@ Let us create a simple Go service with two endpoints:
 - `/save` to receive a record and to store it
 - `/read` to return the previously stored record back
 
-The service will listen at the port `8080`:
+The service will listen on port `8080`:
 
 ```package main
 
@@ -40,7 +40,7 @@ func get(w http.ResponseWriter, req *http.Request) {}
 
 ## Create a connection to the MongoDB Atlas cluster
 
-[mgo.v2](https://pkg.go.dev/gopkg.in/mgo.v2) is a very useful package for interacting with Mongo and we are going to use it for the MongoDB Cluster Atlas as well. Add this function at the beginning of your code:
+[mgo.v2](https://pkg.go.dev/gopkg.in/mgo.v2) is a very useful package for interacting with Mongo and we are going to use it for the MongoDB Atlas as well. Add this function at the beginning of your code:
 
 ```
 func createConnection() (*mgo.Session, error) {
@@ -64,7 +64,7 @@ func createConnection() (*mgo.Session, error) {
 }
 ```
 
-On the MongoDB Atlas you always have not just a single database server, but a cluster with several shards. You have to replace the shard addresses `abc-shard-00-XX.gcp.mongodb.net:27017` with your own ones that are to find here:
+On MongoDB Atlas you always have not just a single database server, but a cluster with several shards. You have to replace the shard addresses `abc-shard-00-XX.gcp.mongodb.net:27017` with your own, which you can find here:
 
 ![Shard Addresses](images/shards.png "Shards")
 
@@ -93,7 +93,7 @@ func main() {
 
 ## Using the mongo connection
 
-What we have now is a singleton `mongoConn` that can be used directly which is not a good idea. Why create it at all? Why cannot we establish a connection every time the client app calls our endpoints?
+What we have done now is a singleton `mongoConn` that can be used directly which is not a good idea. Why make it at all? Why cannot we establish a connection every time the client app calls our endpoints?
 
 Because `mgo.DialWithInfo(...)` can take several seconds before the connection to the MongoDB Atlas is ready. There is a couple of necessary steps like sending and accepting certificates, authorization etc. that needs to be done, before your service can proceed to the next step. You probably want your endpoints to answer within milliseconds, not seconds, right?
 
