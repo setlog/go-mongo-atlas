@@ -6,7 +6,7 @@ In the [previous article](README.md) we told you about how to connect to MongoDB
 
 MongoDB Atlas offers three methods of securing the network:
 
-<img src="images/access_options.png" width=300>
+<img src="images/access_options.png" width=400>
 
 1. `IP Access List` where you can manage static ip addresses of hosts that are allowed to connect to your database clusters. This is a very easy way to achieve the goal, especially if you want to connect a single VM (virtual machine) that has a static public IP. A good thing about this way is that you can use this setup with all tiers MongoDB Atlas offers, even with the smallest and free of charge `M0 Sandbox`.<br>
 However, if you have a kubernetes cluster with several nodes, this option is almost useless. First of all, nodes of the cluster must have public ip addresses - a setup that is normally not favoured for security reasons. Secondly, the public ip of a node in the cluster is most likely to be changed at some point, and therefore MongoDB Atlas might start to refuse connections from this node.<br>
@@ -20,7 +20,7 @@ So, our challenge was to whitelist a Google Kubernetes Engine (GKE) cluster in M
 
 Our goal is to set up the GKE cluster so that it gets an IP address which is public and static. We use Cloud NAT for that:
 
-<img src="images/cloud-nat.png" width=300>
+<img src="images/cloud-nat.png" width=600>
 
 Accordingly to this picture we are going to do following steps:
 
