@@ -18,7 +18,7 @@ So, our challenge was to whitelist a Google Kubernetes Engine (GKE) cluster in M
 
 ## Big Picture
 
-Our goal is to set up our GKE cluster so that it gets an IP address which is public and static. We use Cloud NAT for that:
+Our goal is to set up the GKE cluster so that it gets an IP address which is public and static. We use Cloud NAT for that:
 
 ![Big Picture](images/cloud-nat.png "Cloud NAT")
 
