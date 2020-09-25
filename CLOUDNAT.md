@@ -6,7 +6,7 @@ In the [previous article](README.md) we told you about how to connect to MongoDB
 
 MongoDB Atlas offers three methods of securing the network:
 
-![Options to secure network](images/access_options.png "Options")
+<img src="images/access_options.png">
 
 1. `IP Access List` where you can manage static ip addresses of hosts that are allowed to connect to your database clusters. This is a very easy way to achieve the goal, especially if you want to connect a single VM (virtual machine) that has a static public IP. A good thing about this way is that you can use this setup with all tiers MongoDB Atlas offers, even with the smallest and free of charge `M0 Sandbox`.<br>
 However, if you have a kubernetes cluster with several nodes, this option is almost useless. First of all, nodes of the cluster must have public ip addresses - a setup that is normally not favoured for security reasons. Secondly, the public ip of a node in the cluster is most likely to be changed at some point, and therefore MongoDB Atlas might start to refuse connections from this node.<br>
@@ -20,7 +20,7 @@ So, our challenge was to whitelist a Google Kubernetes Engine (GKE) cluster in M
 
 Our goal is to set up the GKE cluster so that it gets an IP address which is public and static. We use Cloud NAT for that:
 
-![Big Picture](images/cloud-nat.png "Cloud NAT")
+<img src=images/cloud-nat.png>
 
 Accordingly to this picture we are going to do following steps:
 
@@ -81,12 +81,11 @@ my-cluster  europe-west1-b  1.15.12-gke.20  35.234.XX.YY  n1-standard-1  1.15.12
 
 Now we would like to encourage you to go to the [Google Console](https://console.cloud.google.com) and to continue with Cloud NAT:
 
-![Go to Cloud NAT](images/goto-cloud-nat.png "Cloud NAT on Google Console")
+<img src="images/goto-cloud-nat.png" width=300>
 
 ...and click on the button `Create NAT gateway`.
 
-![Create Gateway](images/create-gateway.png "Create NAT gateway")
-
+<img src="images/create-gateway.png" width=400>
 
 You have to fill following fields out:
 
@@ -97,17 +96,17 @@ You have to fill following fields out:
 
 In the new form you just need to give a proper name for a router and click on `Create`:
 
-![Create Router](images/create-router.png "Create the router")
+<img src="images/create-router.png" width=300>
 
 Now you are back to the previous form and your router is already set up.<br>
 
 The last step you have to do is to create a static ip address for our router. Change the selection of the field `NAT IP addresses` to `manual`, let the other fields like they are.
 
-![Select NAT IP](images/select-nat-ip.png "Select NAT IP")
+<img src="images/select-nat-ip.png" width=350>
 
 Again, in a new form you just have to input an alias for the static ip address you are going to reserve:
 
-![Reserve static IP](images/reserve-static-ip.png "Reserve static IP")
+<img src="images/reserve-static-ip.png" width=300>
 
 After several seconds your Cloud NAT gateway is ready to serve you!
 
@@ -115,7 +114,7 @@ After several seconds your Cloud NAT gateway is ready to serve you!
 
 If you click on the newly created gateway, you will see its configuration in details.
 
-![Gateway details](images/nat-details.png "Gateway details")
+<img src="images/nat-details.png" width=350>
 
 `my-nat-ip` has the IP 34.78.85.15 in our case. This is the one that can be whitelisted under `IP Access List` on MongoDB Atlas.<br>
 
