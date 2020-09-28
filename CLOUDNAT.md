@@ -38,9 +38,7 @@ Accordingly to this picture we are going to do following steps:
 
 ## Create a GKE cluster with private nodes
 
-In any case it is a good idea to keep IP addresses of your nodes private. For the security reasons we suggest to have this setup as a best practice. However, we will make the Kubernetes API endpoint public now for the purpose of simplicity.
-
-First, we authorize `gcloud` to access the Cloud Platform:
+In any case, it is a good idea to keep the IP addresses of your nodes private. For security reasons, we recommend choosing this setup as a best practice. However, for simplicity, we will now make the Kubernetes API endpoint publicly available. First we will authorize `gcloud` to access the cloud platform:
 
 ```sh
 > gcloud config set project my-project
@@ -54,7 +52,7 @@ Activated service account credentials for: [cluster-admin@my-project.iam.gservic
 
 _Hint: you must have a service account with the roles `Kubernetes Engine Cluster Admin` and `Compute Network Admin` as well as a key file to create a cluster. In our example we named the service account `cluster-admin` and the key `cluster-admin-key.json`_
 
-Let us boot the cluster up:
+Let's get the cluster up and running:
 
 ```sh
 gcloud container clusters create my-cluster \
@@ -67,17 +65,15 @@ gcloud container clusters create my-cluster \
     --zone europe-west1-b
 ```
 
-...and explain what the parameters are good for as long as the cluster is being configured:
+* `--enable-private-nodes`: All nodes receive private IP addresses and cannot be reached from outside the cluster.
+* `--enable-ip-alias`: A VPC-native cluster is created, i.e. subnets with two secondary IP ranges are established: one for pods and one for services
+* `--master-ipv4-cidr 172.16.0.0/28`: Specifies an internal address range for the Kubernetes management endpoints. You must declare this range when you start a private cluster.
+* `--no-enable-master-authorized-networks`: enable access to the Kubernetes API endpoint from anywhere.
+* `--no-enable-basic-auth`: Disables basic authentication for the cluster.
+* `--no-issue-client-certificate` disables issuing a client certificate.
+* `--zone europe-west1-b`: In which zone should the cluster be created. Be careful when selecting the zone. It should be the same one on which MongoDB Atlas runs, unless you have good reasons to start the cluster somewhere else. Using the same zone shortens the response time of Mongo queries and reduces costs.
 
-`--enable-private-nodes`: like it says the nodes will receive private IP addresses and will not be accessible from outside the cluster.<br>
-`--enable-ip-alias`: it creates a VPC-native cluster which means setting up subnetworks that has two secondary IP ranges: one for pods and one for services.<br>
-`--master-ipv4-cidr 172.16.0.0/28` specifies an internal address range for the Kubernetes management endpoints. You must declare this range, if you start a private cluster.<br>
-`--no-enable-master-authorized-networks` allow to access the Kubernetes API endpoint from everywhere.<br>
-`--no-enable-basic-auth` disables basic authentication for the cluster.<br>
-`--no-issue-client-certificate` disables issuing a client certificate.<br>
-`--zone europe-west1-b` defines in which cloud zone is to create the cluster. Be careful in choosing the zone. It should be the same one as MongoDB Atlas is running on, unless you have good reasons to start the cluster somewhere else. Using the same zone makes the response time of the Mongo queries shorter and the costs lower.
-
-We hope you see a similar picture now:
+If everything worked, you should receive such an output.
 
 ```sh
 NAME        LOCATION        MASTER_VERSION  MASTER_IP     MACHINE_TYPE   NODE_VERSION    NUM_NODES  STATUS
