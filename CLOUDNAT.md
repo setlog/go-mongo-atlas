@@ -4,21 +4,28 @@ In the [previous article](README.md) we showed you how to connect to MongoDB Atl
 
 ## Possible solutions
 
-MongoDB Atlas offers three methods of securing the network:
+MongoDB Atlas offers three possibilities to secure the network access:
 
 <img src="images/access_options.png" width=400>
 
-1. `IP Access List` where you can manage static ip addresses of hosts that are allowed to connect to your database clusters. This is a very easy way to achieve the goal, especially if you want to connect a single VM (virtual machine) that has a static public IP. A good thing about this way is that you can use this setup with all tiers MongoDB Atlas offers, even with the smallest and free of charge `M0 Sandbox`.<br>
-However, if you have a kubernetes cluster with several nodes, this option is almost useless. First of all, nodes of the cluster must have public ip addresses - a setup that is normally not favoured for security reasons. Secondly, the public ip of a node in the cluster is most likely to be changed at some point, and therefore MongoDB Atlas might start to refuse connections from this node.<br>
-Why this option is _almost_ useless for kubernetes clusters, we'll explain below. 
-2. `Peering` is very good in case you have a cluster to connect. Also pretty easy to set up. There is a [comprehensive guide](https://docs.atlas.mongodb.com/security-vpc-peering/) on how to do it. However, you must have at least `M10` cluster which is not always what you want to use. For example, we like to use several smaller MongoDB Atlas clusters, sometimes using them fleetingly and at a lower price. So, that option does not entirely meet our requirements as well.
-3. `Private Endpoint` is quite the same as `Peering`, but built for AWS and works for it very well.
+### IP Access List
 
-So, our challenge was to whitelist a Google Kubernetes Engine (GKE) cluster in MongoDB Atlas for `M2`, `M5` or even with a free of charge `M0` tier. MongoDB Atlas does not support such possibility out-of-the-box. We need to tinker around the GKE cluster.
+You can manage static IP addresses of hosts allowed to connect to your database clusters. This is a very easy way to achieve the goal, especially if you want to connect a single VM (virtual machine) that has a static public IP. One good thing about this way is that you can use this setup with all layers that MongoDB Atlas offers, even the smallest and free `M0 Sandbox`. However, if you have a Kubernetes cluster with multiple nodes, this option is almost useless. First of all, the nodes of the cluster must have public IP addresses - a setup that is usually not preferred for security reasons. Second, the public IP address of a node in the cluster will most likely change at some point, and therefore the MongoDB atlas might start to reject connections from that node.
+Why this option is _almost_ useless for Kubernetes clusters, we will explain below.
+
+### Peering
+
+Is very good if you have a cluster to connect. Also quite easy to set up. There is a [comprehensive guide](https://docs.atlas.mongodb.com/security-vpc-peering/) on how to do this. However, you must have at least one `M10` cluster, which is not always what you want to use. For example, we like to use several smaller MongoDB atlas clusters, sometimes only volatile and at a lower price. So even this option does not quite meet our requirements.
+
+### Private Endpoint
+
+Is pretty much the same as `peering`, but was built for AWS and works very well for them.
+
+So, our challenge is to whitelist a Google Kubernetes Engine (GKE) cluster in MongoDB Atlas for `M2`, `M5` or even with a free of charge `M0` tier. MongoDB Atlas doesn't support such possibility out-of-the-box. We have to tinker with the GKE cluster.
 
 ## Big Picture
 
-Our goal is to set up the GKE cluster so that it gets an IP address which is public and static. We use Cloud NAT for that:
+Our goal is to set up the GKE cluster so that it receives an IP address that is public and static. For this we use Cloud NAT:
 
 <img src="images/cloud-nat.png" width=600>
 
