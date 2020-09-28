@@ -1,6 +1,6 @@
 ## Preface
 
-In the [previous article](README.md) we told you about how to connect to MongoDB Atlas with Go and to interact with the database cluster. MongoDB Atlas is a cloud platform, therefore queries run through the public internet and must be very well secured. Let us go through some options we have in matters of safety and security while creating a distributed cloud infrastructure. We are going to concentrate on one particular setup, and that is a connection between a Google Kubernetes cluster and a MongoDB Atlas.
+In the [previous article](README.md) we showed you how to connect to MongoDB Atlas with Go and interact with the database cluster. MongoDB Atlas is a cloud platform, therefore queries run through the public internet and must be very well secured. Let's go over some of the options we have in terms of security and protection while creating a distributed cloud infrastructure. We'll focus on one particular facility, and that's a connection between a Google Kubernetes cluster and a MongoDB atlas.
 
 ## Possible solutions
 
