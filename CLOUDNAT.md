@@ -31,10 +31,10 @@ Our goal is to set up the GKE cluster so that it receives an IP address that is 
 
 Accordingly to this picture we are going to do following steps:
 
-1. create a GKE cluster with private nodes
-2. create a router and connect it with the clusters network
-3. preserve a static ip address and assign it to the router
-4. whitelist this ip address in Mongo DB Atlas in `IP Access List`
+1. Create a GKE cluster with private nodes
+2. Create a router and connect it with the clusters network
+3. Preserve a static ip address and assign it to the router
+4. Whitelist this ip address in Mongo DB Atlas in `IP Access List`
 
 ## Create a GKE cluster with private nodes
 
