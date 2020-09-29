@@ -82,7 +82,8 @@ my-cluster  europe-west1-b  1.15.12-gke.20  35.234.XX.YY  n1-standard-1  1.15.12
 
 ## Setting up the router with the static IP
 
-Now we would like to encourage you to go to the [Google Console](https://console.cloud.google.com) and to continue with Cloud NAT:
+Now we encourage you to go to the [Google Console](https://console.cloud.google.com) and continue with Cloud NAT:
+
 
 <img src="images/goto-cloud-nat.png" width=300>
 
@@ -90,28 +91,26 @@ Now we would like to encourage you to go to the [Google Console](https://console
 
 <img src="images/create-gateway.png" width=400>
 
-You have to fill following fields out:
+You must fill in the following fields:
 
-`Gateway name` like it says this is the name of your gateway.<br>
-`VPC Network` may stay as _default_ so far.<br>
-`Region` should be the same where your cluster runs (_europe-west1_ in our case)<br>
-`Cloud Router` is not created yet, but we can create it right here by clicking on _Create new router_<br>
+* `Gateway name`: As it says, this is the name of your gateway.
+* `VPC Network`: Can remain as _default_ until now.
+* `Region`: Should be the same where your cluster runs (_europe-west1_ in our case).
+* `Cloud Router`: Is not yet created, but we can create it right here by clicking on _Create New Router_.
 
-In the new form you just need to give a proper name for a router and click on `Create`:
+In the new form you only need to enter a proper name for a router and click on `Create`:
 
 <img src="images/create-router.png" width=300>
 
-Now you are back to the previous form and your router is already set up.<br>
-
-The last step you have to do is to create a static ip address for our router. Change the selection of the field `NAT IP addresses` to `manual`, let the other fields like they are.
+Now you are back on the previous form and your router is already set up. The last step is to create a static IP address for our router. Change the selection of the field `NAT IP addresses` to `manual`, leave the other fields as they are.
 
 <img src="images/select-nat-ip.png" width=350>
 
-Again, in a new form you just have to input an alias for the static ip address you are going to reserve:
+Again, in a new form you only need to enter an alias for the static IP address you want to reserve:
 
 <img src="images/reserve-static-ip.png" width=300>
 
-After several seconds your Cloud NAT gateway is ready to serve you!
+After a few seconds your Cloud NAT gateway is ready to serve you!
 
 ## Whitelist the IP address on MongoDB Atlas
 
