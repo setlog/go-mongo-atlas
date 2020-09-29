@@ -114,15 +114,13 @@ After a few seconds your Cloud NAT gateway is ready to serve you!
 
 ## Whitelist the IP address on MongoDB Atlas
 
-If you click on the newly created gateway, you will see its configuration in details.
+If you click on the newly created gateway, you will see its configuration in detail.
 
 <img src="images/nat-details.png" width=350>
 
-`my-nat-ip` has the IP 34.78.85.15 in our case. This is the one that can be whitelisted under `IP Access List` on MongoDB Atlas.<br>
+`my-nat-ip` has the IP 34.78.85.15 in our case. This is the one that can be whitelisted in the MongoDB-Atlas under `IP Access List`. On the [MongoDB Atlas Console](https://cloud.mongodb.com) go under _Network Access -> IP Access list_ again, click on `Add IP Address` there and put this IP and a comment.
 
-On the [MongoDB Atlas Console](https://cloud.mongodb.com) go under _Network Access -> IP Access list_ again, click on `Add IP Address` there and put this IP and a comment.<br>
-
-Now your GKE cluster is securely connected to the MongoDB Atlas and you can use database clusters of any setup you want!
+Now your GKE cluster is securely connected to the MongoDB atlas and you can use database clusters in any desired configuration!
 
 ## Things to be considered
 
