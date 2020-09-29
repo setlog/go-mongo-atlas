@@ -130,9 +130,10 @@ You can remove the GKE cluster easily by the following command:
 gcloud container clusters delete my-cluster --zone europe-west1-b
 ```
 
-However, this command does not release the static IP address you reserved earlier. And this is a resource you are paying to Google for. Be careful to remove everything:
-- the Cloud NAT
-- the router
-- the static IP address under _VPC Network -> External IP Addresses_ as the last step
+However, this command does not release the static IP address that you reserved previously. And this is a resource you pay Google for. Be sure to remove everything:
+
+* Cloud NAT
+* Router
+* Static IP address under _VPC Network -> External IP Addresses_ as the last step
 
 Actually you have to use an infrastructure as code software for this, but there is enough input for today.
